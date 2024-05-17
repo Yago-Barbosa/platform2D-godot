@@ -1,0 +1,140 @@
+[gd_scene load_steps=16 format=3 uid="uid://festv3305ihy"]
+
+[ext_resource type="Script" path="res://Scripts/PlayerMovement.gd" id="1_4cxlr"]
+[ext_resource type="Texture2D" uid="uid://81y3uiljyb5r" path="res://Assets/Sprites/Sprite Pack 2/2 - Mr. Mochi/Jumping (32 x 32).png" id="3_50t45"]
+[ext_resource type="Texture2D" uid="uid://lx0kb8jqquac" path="res://Assets/Sprites/Sprite Pack 2/2 - Mr. Mochi/Running (32 x 32).png" id="3_boyvu"]
+[ext_resource type="Texture2D" uid="uid://d1edtaikc6weg" path="res://Assets/Sprites/Sprite Pack 2/2 - Mr. Mochi/Idle (32 x 32).png" id="3_hdajn"]
+[ext_resource type="Texture2D" uid="uid://of51b27hat2c" path="res://Assets/Sprites/Sprite Pack 2/2 - Mr. Mochi/Hurt (32 x 32).png" id="5_tj4ue"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ip8d1"]
+size = Vector2(14.5, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yi16y"]
+atlas = ExtResource("3_hdajn")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrakm"]
+atlas = ExtResource("3_hdajn")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2uigo"]
+atlas = ExtResource("3_boyvu")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c46xq"]
+atlas = ExtResource("3_boyvu")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pe77f"]
+atlas = ExtResource("3_boyvu")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nmp3u"]
+atlas = ExtResource("3_boyvu")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_swqai"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_tj4ue")
+}],
+"loop": true,
+"name": &"Hurt",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 10.0,
+"texture": SubResource("AtlasTexture_yi16y")
+}, {
+"duration": 0.6,
+"texture": SubResource("AtlasTexture_xrakm")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_50t45")
+}],
+"loop": true,
+"name": &"Jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.8,
+"texture": SubResource("AtlasTexture_2uigo")
+}, {
+"duration": 0.8,
+"texture": SubResource("AtlasTexture_c46xq")
+}, {
+"duration": 0.8,
+"texture": SubResource("AtlasTexture_pe77f")
+}, {
+"duration": 0.8,
+"texture": SubResource("AtlasTexture_nmp3u")
+}],
+"loop": true,
+"name": &"Run",
+"speed": 9.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_03u7g"]
+size = Vector2(18, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xdx21"]
+size = Vector2(14, 3)
+
+[node name="Player" type="CharacterBody2D"]
+collision_mask = 94
+script = ExtResource("1_4cxlr")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ip8d1")
+
+[node name="Animation" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+sprite_frames = SubResource("SpriteFrames_swqai")
+animation = &"Hurt"
+autoplay = "Idle"
+frame_progress = 0.86528
+metadata/_edit_lock_ = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+gravity_point = true
+
+[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_03u7g")
+debug_color = Color(0.964706, 0.113725, 0.368627, 0.419608)
+
+[node name="Remote" type="RemoteTransform2D" parent="."]
+
+[node name="Ray_rigth" type="RayCast2D" parent="."]
+position = Vector2(8, 0)
+target_position = Vector2(4, 0)
+collision_mask = 4
+hit_from_inside = true
+
+[node name="Ray_left" type="RayCast2D" parent="."]
+position = Vector2(-8, 0)
+target_position = Vector2(-4, 0)
+collision_mask = 4
+hit_from_inside = true
+
+[node name="head_collider" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 64
+
+[node name="head_collision" type="CollisionShape2D" parent="head_collider"]
+position = Vector2(0, -7.5)
+shape = SubResource("RectangleShape2D_xdx21")
+debug_color = Color(0.792157, 0.447059, 0.101961, 0.419608)
+
+[connection signal="body_entered" from="Hurtbox" to="." method="_on_hurtbox_body_entered"]
+[connection signal="body_entered" from="head_collider" to="." method="_on_head_collider_body_entered"]
